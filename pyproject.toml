@@ -2,15 +2,15 @@
 authors = [{name = "Ian Laird",email = "irlaird@gmail.com"}]
 description = "A tool to manage dotfiles."
 homepage = "https://github.com/en0/dfctl"
-license = "MIT"
+license = { file = "LICENSE" }
 name = "dfctl"
 readme = "README.md"
 requires-python = ">=3.10"
 version = "0.1.0"
 
 dependencies = [
-    "pyioc3==1.6.1"
-]
+    "pyioc3==1.6.1",
+    "pytest (>=8.3.5,<9.0.0)"]
 
 [project.scripts]
 dfctl = "dfctl.entry:main"
@@ -21,12 +21,18 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 packages = [
-    { include = "dfctl" },
-    { include = "dflib" },
-]
+    { include = "dfctl", from = "src" },
+    { include = "dflib", from = "src" }]
 
 [tool.poetry.group.dev.dependencies]
 black = "^21.0"
 flake8 = "^3.8"
-pytest = "^6.0"
+pytest = "^8.0"
 pytest-watch = "^4.2"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-x --ff"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
