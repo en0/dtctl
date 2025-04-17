@@ -19,7 +19,21 @@ as the library evolves.
 """
 
 from .config_set_file_handler import IConfigSetFileHandler
+from .repository import (
+    FilterPredicate,
+    IDENTITY_T,
+    IQueryBuilder,
+    IFilterVisitor,
+    IRepository,
+    MODEL_T,
+)
 
 __all__ = [
+    "FilterPredicate",
     "IConfigSetFileHandler",
+    "IDENTITY_T",
+    "IQueryBuilder",
+    "IFilterVisitor",
+    "IRepository",
+    "MODEL_T",
 ]
