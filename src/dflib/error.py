@@ -43,7 +43,6 @@ class FileNotFoundError(FileReadError):
         self.file_path: str = file_path
 
 
-
 class FileWriteError(DFError):
     """
     Exception raised when there is an issue writing a file.
@@ -84,13 +83,11 @@ class EntityNotFoundError(DFError):
     Exception raised when an entity is not found in the repository.
 
     Attributes:
-        entity_type (str): The type of the entity that was not found.
         identifier (Any): The identifier of the missing entity.
     """
-    def __init__(self, entity_type: str, identifier: Any):
-        self.entity_type: str = entity_type
+    def __init__(self, identifier: Any):
         self.identifier: Any = identifier
-        super().__init__(f"{entity_type} with identifier '{identifier}' was not found.")
+        super().__init__(f"No entity with identifier '{identifier}' was not found.")
 
 
 class DuplicateEntityError(DFError):
@@ -98,13 +95,11 @@ class DuplicateEntityError(DFError):
     Exception raised when attempting to save a duplicate entity.
 
     Attributes:
-        entity_type (str): The type of the entity that caused the conflict.
         identifier (Any): The identifier of the conflicting entity.
     """
-    def __init__(self, entity_type: str, identifier: Any):
-        self.entity_type: str = entity_type
+    def __init__(self, identifier: Any):
         self.identifier: Any = identifier
-        super().__init__(f"Duplicate {entity_type} with identifier '{identifier}'.")
+        super().__init__(f"Duplicate entity with identifier '{identifier}'.")
 
 
 class QueryExecutionError(DFError):
@@ -153,7 +148,7 @@ class ConfigSetNotFoundError(DFError):
         super().__init__(f"The configuration set '{config_set_name}' was not found.")
 
 
-class FileAlreadyExistsError(DFError):
+class ConfigFileAlreadyExistsError(DFError):
     """
     Exception raised when attempting to add a file that already exists in a configuration set.
 
@@ -172,7 +167,7 @@ class FileAlreadyExistsError(DFError):
         super().__init__(f"The file '{file_name}' already exists in the configuration set '{config_set_name}'.")
 
 
-class FileNotFoundError(DFError):
+class ConfigFileNotFoundError(DFError):
     """
     Exception raised when a file is not found in a configuration set.
 

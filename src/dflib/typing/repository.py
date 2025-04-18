@@ -6,7 +6,7 @@ MODEL_T = TypeVar("MODEL_T")
 IDENTITY_T = TypeVar("IDENTITY_T")
 
 
-FilterPredicate = Callable[["IQueryBuilder"], "IQueryBuilder | None"]
+FilterPredicate = Callable[["IQueryBuilder"], "IQueryBuilder"]
 
 
 class IFilterVisitor(ABC):
@@ -105,7 +105,7 @@ class IRepository(Generic[MODEL_T, IDENTITY_T]):
     Methods:
         - `save(entity: MODEL_T) -> MODEL_T`: Persist a new entity.
         - `update(entity: MODEL_T) -> MODEL_T`: Update an existing entity.
-        - `delete(id: IDENTITY_T) -> None`: Delete an entity by its identifier.
+        - `delete(ident: IDENTITY_T) -> None`: Delete an entity by its identifier.
         - `find_by_id(ident: IDENTITY_T) -> MODEL_T`: Retrieve an entity by its identifier.
         - `find_all() -> list[MODEL_T]`: Retrieve all entities.
         - `find(filter: Predicate) -> list[MODEL_T]`: Retrieve entities matching a given filter.
@@ -144,12 +144,12 @@ class IRepository(Generic[MODEL_T, IDENTITY_T]):
         raise NotImplementedError()
 
     @abstractmethod
-    def delete(self, id: IDENTITY_T) -> None:
+    def delete(self, ident: IDENTITY_T) -> None:
         """
         Delete an entity from the repository by its identifier.
 
         Args:
-            id (IDENTITY_T): The unique identifier of the entity to delete.
+            ident (IDENTITY_T): The unique identifier of the entity to delete.
 
         Raises:
             EntityNotFoundError: If the entity to delete does not exist.

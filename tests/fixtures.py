@@ -13,7 +13,7 @@ def mock_config_set_repo() -> IRepository[ConfigSet, str]:
     """
     Mock implementation of IRepository for ConfigSet objects.
     """
-    return RepositoryMock[ConfigSet, str]()
+    return ConfigSetRepositoryMock()
 
 
 @pytest.fixture

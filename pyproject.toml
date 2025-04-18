@@ -36,3 +36,7 @@ addopts = "-x --ff"
 testpaths = ["tests"]
 pythonpath = ["src"]
 
+[tool.pyright]
+reportAny = false
+reportExplicitAny = false
+reportUnknownLambdaType = false

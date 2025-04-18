@@ -1,6 +1,7 @@
 from typing import final
 from uuid import UUID
 from pathlib import Path
+from dflib.error import DuplicateConfigSetError, DuplicateEntityError
 from dflib.model import ConfigSet, ConfigSetEntry
 from dflib.typing import (
     IConfigSetFileHandler,
@@ -35,7 +36,11 @@ class ConfigSetService:
             DuplicateConfigSetError: Raised if a configuration set with the same name already exists.
             OperationFailedError: Raised if the operation to create the configuration set fails.
         """
-        raise NotImplementedError()
+        cs = ConfigSet(config_set_name, [])
+        try:
+            return self._repo.save(cs)
+        except DuplicateEntityError:
+            raise DuplicateConfigSetError(config_set_name)
 
     def delete(self, config_set_name: str) -> None:
         """
