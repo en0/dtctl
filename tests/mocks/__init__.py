@@ -7,9 +7,11 @@ should end with the word "Mock" and be exposed in the __all__ list of this modul
 
 
 from .config_set_repo_mock import ConfigSetRepositoryMock
+from .config_set_file_handler_mock import ConfigSetFileHandlerMock
 
 
 __all__ = [
-    "ConfigSetRepositoryMock"
+    "ConfigSetRepositoryMock",
+    "ConfigSetFileHandlerMock",
 ]
 

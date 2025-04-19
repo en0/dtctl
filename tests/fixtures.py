@@ -21,4 +21,4 @@ def config_set_file_handler() -> IConfigSetFileHandler:
     """
     Mock implementation of IConfigSetFileHandler.
     """
-    return MagicMock(spec=IConfigSetFileHandler)
+    return ConfigSetFileHandlerMock()

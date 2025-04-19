@@ -1,42 +1,42 @@
-from typing import Any, final, override
-
+from dflib.error import EntityNotFoundError
 from dflib.model import ConfigSet
-from dflib.typing import IQueryBuilder, IFilterVisitor
+from dflib.typing import IQueryBuilder, IFilterVisitor, IRepository, FilterPredicate
+from typing import override
 
-from .repository_mock import RepositoryMock
 
-
-@final
-class ConfigSetRepositoryMock(RepositoryMock[ConfigSet, str]):
-    """In-Memory Repository for ConfigSets.
-
-    This class implements an in-memory repository mock for ConfigSets by extending the
-    RepositoryMock.
-
-    Note: This class is a unit test mock.
-    """
-
-    class _Builder(IQueryBuilder):
-
-        @override
-        def equals(self, field: str, value: Any) -> "ConfigSetRepositoryMock._Builder":
-            self.eqs.append((field, value))
-            return self
-
-        @override
-        def accept(self, visitor: IFilterVisitor) -> None:
-            for f, v in self.eqs:
-                visitor.visitEquals(f, v)
-
-        @override
-        def __init__(self):
-            self.eqs: list[tuple[str, Any]] = []
+class ConfigSetRepositoryMock(IRepository[ConfigSet, str]):
 
     @override
-    def ident_from_model(self, entity: ConfigSet) -> str:
-        return entity.name
+    def save(self, entity: ConfigSet) -> ConfigSet:
+        self._datastore[entity.name] = entity
+        return entity
 
     @override
-    def get_query_builder(self) -> IQueryBuilder:
-        return self._Builder()
+    def update(self, entity: ConfigSet) -> ConfigSet:
+        if entity.name not in self._datastore:
+            raise EntityNotFoundError(entity.name)
+        self._datastore[entity.name] = entity
+        return entity
 
+    @override
+    def delete(self, ident: str) -> None:
+        if ident not in self._datastore:
+            raise EntityNotFoundError(ident)
+        del self._datastore[ident]
+
+    @override
+    def find_by_id(self, ident: str) -> ConfigSet:
+        if ident not in self._datastore:
+            raise EntityNotFoundError(ident)
+        return self._datastore[ident]
+
+    @override
+    def find_all(self) -> list[ConfigSet]:
+        return list(self._datastore.values())
+
+    @override
+    def find(self, filter: FilterPredicate) -> list[ConfigSet]:
+        raise NotImplementedError()
+
+    def __init__(self):
+        self._datastore: dict[str, ConfigSet] = {}
