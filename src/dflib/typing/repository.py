@@ -200,4 +200,3 @@ class IRepository(Generic[MODEL_T, IDENTITY_T]):
             QueryExecutionError: If there is an error while executing the filter.
         """
         raise NotImplementedError()
-

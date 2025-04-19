@@ -25,6 +25,7 @@ packages = [
     { include = "dflib", from = "src" }]
 
 [tool.poetry.group.dev.dependencies]
+click = "<8.0"
 black = "^21.0"
 flake8 = "^3.8"
 pytest = "^8.0"

@@ -6,6 +6,7 @@ from typing import Any
 
 class DFError(Exception):
     """Base class for all exceptions raised by dflib."""
+
     pass
 
 
@@ -38,7 +39,9 @@ class FileNotFoundError(FileReadError):
         message (str): A detailed error message describing the issue.
     """
 
-    def __init__(self, file_path: str, message: str = "Unable to write file due to conflict."):
+    def __init__(
+        self, file_path: str, message: str = "Unable to write file due to conflict."
+    ):
         super().__init__(message)
         self.file_path: str = file_path
 
@@ -73,7 +76,9 @@ class FileConflictError(FileWriteError):
         message (str): A detailed error message describing the issue.
     """
 
-    def __init__(self, file_path: str, message: str = "Unable to write file due to conflict."):
+    def __init__(
+        self, file_path: str, message: str = "Unable to write file due to conflict."
+    ):
         super().__init__(message)
         self.file_path: str = file_path
 
@@ -85,6 +90,7 @@ class EntityNotFoundError(DFError):
     Attributes:
         identifier (Any): The identifier of the missing entity.
     """
+
     def __init__(self, identifier: Any):
         self.identifier: Any = identifier
         super().__init__(f"No entity with identifier '{identifier}' was not found.")
@@ -97,6 +103,7 @@ class DuplicateEntityError(DFError):
     Attributes:
         identifier (Any): The identifier of the conflicting entity.
     """
+
     def __init__(self, identifier: Any):
         self.identifier: Any = identifier
         super().__init__(f"Duplicate entity with identifier '{identifier}'.")
@@ -110,6 +117,7 @@ class QueryExecutionError(DFError):
         query (str): The query that failed.
         reason (str): A description of the failure reason.
     """
+
     def __init__(self, query: str, reason: str):
         self.query: str = query
         self.reason: str = reason
@@ -129,7 +137,9 @@ class DuplicateConfigSetError(DFError):
 
     def __init__(self, config_set_name: str):
         self.config_set_name: str = config_set_name
-        super().__init__(f"A configuration set with the name '{config_set_name}' already exists.")
+        super().__init__(
+            f"A configuration set with the name '{config_set_name}' already exists."
+        )
 
 
 class ConfigSetNotFoundError(DFError):
@@ -164,7 +174,9 @@ class ConfigFileAlreadyExistsError(DFError):
     def __init__(self, config_set_name: str, file_name: str):
         self.config_set_name: str = config_set_name
         self.file_name: str = file_name
-        super().__init__(f"The file '{file_name}' already exists in the configuration set '{config_set_name}'.")
+        super().__init__(
+            f"The file '{file_name}' already exists in the configuration set '{config_set_name}'."
+        )
 
 
 class ConfigFileNotFoundError(DFError):
@@ -183,7 +195,9 @@ class ConfigFileNotFoundError(DFError):
     def __init__(self, config_set_name: str, file_name: str):
         self.config_set_name: str = config_set_name
         self.file_name: str = file_name
-        super().__init__(f"The file '{file_name}' was not found in the configuration set '{config_set_name}'.")
+        super().__init__(
+            f"The file '{file_name}' was not found in the configuration set '{config_set_name}'."
+        )
 
 
 class OperationFailedError(DFError):

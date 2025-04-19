@@ -15,6 +15,7 @@ class ConfigSetEntry:
         id (UUID): Unique identifier for the configuration set entry.
         name (Path): Path to the configuration file.
     """
+
     id: UUID
     name: Path
 
@@ -29,6 +30,6 @@ class ConfigSet:
         files (list[ConfigSetEntry]): A list of `ConfigSetEntry` objects representing the files
                                       within the set.
     """
+
     name: str
     files: list[ConfigSetEntry]
-
