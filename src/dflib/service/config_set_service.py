@@ -1,12 +1,23 @@
+import re
+
+from re import compile as compile_re
 from typing import final
-from uuid import UUID
-from pathlib import Path
-from dflib.error import DuplicateConfigSetError, DuplicateEntityError
+#from uuid import UUID
+#from pathlib import Path
+from dflib.error import (
+    DuplicateConfigSetError,
+    DuplicateEntityError,
+    InvalidConfigSetNameError,
+)
 from dflib.model import ConfigSet, ConfigSetEntry
 from dflib.typing import (
     IConfigSetFileHandler,
     IRepository,
 )
+
+
+# Allow only a-z, A-Z, 0-9, ., -, and _
+CONFIG_SET_NAME_PATTERN = compile_re(r"^[a-zA-Z0-9._-]+$")
 
 
 @final
@@ -35,8 +46,22 @@ class ConfigSetService:
         Raises:
             DuplicateConfigSetError: Raised if a configuration set with the same name already exists.
             OperationFailedError: Raised if the operation to create the configuration set fails.
+            InvalidConfigSetNameError: Raised if the configuration set name is invalid.
         """
+
+        config_set_name = str(config_set_name).strip()
+
+        if len(config_set_name) > 25:
+            raise InvalidConfigSetNameError(config_set_name)
+
+        elif not config_set_name:
+            raise InvalidConfigSetNameError(config_set_name)
+
+        elif not CONFIG_SET_NAME_PATTERN.match(config_set_name):
+            raise InvalidConfigSetNameError(config_set_name)
+
         cs = ConfigSet(config_set_name, [])
+
         try:
             return self._repo.save(cs)
         except DuplicateEntityError:

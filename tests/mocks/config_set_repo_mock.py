@@ -1,6 +1,6 @@
-from dflib.error import EntityNotFoundError
+from dflib.error import DuplicateEntityError, EntityNotFoundError
 from dflib.model import ConfigSet
-from dflib.typing import IQueryBuilder, IFilterVisitor, IRepository, FilterPredicate
+from dflib.typing import IRepository, FilterPredicate
 from typing import override
 
 
@@ -8,6 +8,8 @@ class ConfigSetRepositoryMock(IRepository[ConfigSet, str]):
 
     @override
     def save(self, entity: ConfigSet) -> ConfigSet:
+        if entity.name in self._datastore:
+            raise DuplicateEntityError(entity.name)
         self._datastore[entity.name] = entity
         return entity
 
