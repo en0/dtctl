@@ -1,13 +1,18 @@
-import re
-
-from re import compile as compile_re
+from re import compile as compile_re, search as search_re
 from typing import final
 #from uuid import UUID
-#from pathlib import Path
+from pathlib import Path
+from uuid import uuid4
 from dflib.error import (
+    ConfigFileAlreadyExistsError,
+    ConfigSetNotFoundError,
     DuplicateConfigSetError,
     DuplicateEntityError,
+    EntityNotFoundError,
+    FileWriteError,
     InvalidConfigSetNameError,
+    OperationFailedError,
+    ConfigFileNameInvalidError,
 )
 from dflib.model import ConfigSet, ConfigSetEntry
 from dflib.typing import (
@@ -18,6 +23,7 @@ from dflib.typing import (
 
 # Allow only a-z, A-Z, 0-9, ., -, and _
 CONFIG_SET_NAME_PATTERN = compile_re(r"^[a-zA-Z0-9._-]+$")
+INVALID_FILENAME_PATTERN = compile_re(r'[<>:"|?*{}!$%]')
 
 
 @final
@@ -100,10 +106,36 @@ class ConfigSetService:
 
         Raises:
             ConfigSetNotFoundError: Raised if the configuration set does not exist.
-            FileAlreadyExistsError: Raised if one or more files already exist in the configuration set.
+            ConfigFileAlreadyExistsError: Raised if one or more files already exist in the configuration set.
             OperationFailedError: Raised if the operation to add files fails.
         """
-        raise NotImplementedError()
+
+        try:
+
+            config_set = self._repo.find_by_id(config_set_name)
+            existing_files = {entry.name for entry in config_set.files}
+
+            for file_name, file_bytes in files.items():
+                if file_name == "" or file_name == "." or file_name.endswith("\\") or file_name.endswith("/"):
+                    raise ConfigFileNameInvalidError(file_name)
+
+                elif INVALID_FILENAME_PATTERN.search(file_name):
+                    raise ConfigFileNameInvalidError(file_name)
+
+                elif Path(file_name) in existing_files:
+                    raise ConfigFileAlreadyExistsError(config_set_name, file_name)
+
+                entry = ConfigSetEntry(id=uuid4(), name=Path(file_name))
+                config_set.files.append(entry)
+                self._file_handler.store(entry.id, file_bytes)
+
+            return self._repo.update(config_set)
+
+        except EntityNotFoundError:
+            raise ConfigSetNotFoundError(config_set_name)
+
+        except FileWriteError as e:
+            raise OperationFailedError("add_files", str(e))
 
     def remove_files(self, config_set_name: str, files: list[str]) -> None:
         """

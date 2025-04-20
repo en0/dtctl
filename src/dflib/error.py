@@ -200,6 +200,22 @@ class ConfigFileNotFoundError(DFError):
         )
 
 
+class ConfigFileNameInvalidError(DFError):
+    """
+    Exception raised when an invalid file name is provided for a configuration set.
+
+    Args:
+        file_name (str): The invalid file name.
+
+    Attributes:
+        file_name (str): The invalid file name.
+    """
+
+    def __init__(self, file_name: str):
+        self.file_name: str = file_name
+        super().__init__(f"The file name '{file_name}' is invalid.")
+
+
 class InvalidConfigSetNameError(DFError):
     """
     Exception raised when an invalid configuration set name is provided.
