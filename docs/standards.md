@@ -83,6 +83,7 @@ class MyRepository(IRepository):
 - The `unit` fixture should always be included in each test file and represent the unit under test.
 - Include tests that verify exception handling.
 - Unit tests should follow the "given, when, then" structure.
+- Unit tests do not require docstrings.
 
 1. **The Unit Under Test**
 

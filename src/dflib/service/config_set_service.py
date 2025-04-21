@@ -13,6 +13,7 @@ from dflib.error import (
     InvalidConfigSetNameError,
     OperationFailedError,
     ConfigFileNameInvalidError,
+    FileNotFoundError,
 )
 from dflib.model import ConfigSet, ConfigSetEntry
 from dflib.typing import (
@@ -153,7 +154,20 @@ class ConfigSetService:
             FileNotFoundError: Raised if one or more files are not part of the configuration set.
             OperationFailedError: Raised if the operation to remove files fails.
         """
-        raise NotImplementedError()
+        config_set = self._repo.find_by_id(config_set_name)
+
+        file_keys = {Path(f) for f in files}
+        existing_files = {entry.name for entry in config_set.files}
+        missing_files = file_keys - existing_files
+
+        for f in missing_files:
+            raise FileNotFoundError(str(f))
+
+        for entry_to_remove in [entry for entry in config_set.files if entry.name in file_keys]:
+            config_set.files.remove(entry_to_remove)
+            self._file_handler.remove(entry_to_remove.id)
+
+        _ = self._repo.update(config_set)
 
     def all(self) -> list[ConfigSet]:
         """
