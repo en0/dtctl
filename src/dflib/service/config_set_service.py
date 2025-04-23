@@ -138,7 +138,7 @@ class ConfigSetService:
         except FileWriteError as e:
             raise OperationFailedError("add_files", str(e))
 
-    def remove_files(self, config_set_name: str, files: list[str]) -> None:
+    def remove_files(self, config_set_name: str, files: list[str]) -> ConfigSet:
         """
         Remove files from an existing configuration set.
 
@@ -149,25 +149,33 @@ class ConfigSetService:
             config_set_name (str): The name of the configuration set to modify.
             files (list[str]): A list of file names to remove from the configuration set.
 
+        Returns:
+            ConfigSet: The updated configuration set after the files are removed.
+
         Raises:
             ConfigSetNotFoundError: Raised if the configuration set does not exist.
             FileNotFoundError: Raised if one or more files are not part of the configuration set.
             OperationFailedError: Raised if the operation to remove files fails.
         """
-        config_set = self._repo.find_by_id(config_set_name)
 
-        file_keys = {Path(f) for f in files}
-        existing_files = {entry.name for entry in config_set.files}
-        missing_files = file_keys - existing_files
+        try:
+            config_set = self._repo.find_by_id(config_set_name)
 
-        for f in missing_files:
-            raise FileNotFoundError(str(f))
+            file_keys = {Path(f) for f in files}
+            existing_files = {entry.name for entry in config_set.files}
+            missing_files = file_keys - existing_files
 
-        for entry_to_remove in [entry for entry in config_set.files if entry.name in file_keys]:
-            config_set.files.remove(entry_to_remove)
-            self._file_handler.remove(entry_to_remove.id)
+            for f in missing_files:
+                raise FileNotFoundError(str(f))
 
-        _ = self._repo.update(config_set)
+            for entry_to_remove in [entry for entry in config_set.files if entry.name in file_keys]:
+                config_set.files.remove(entry_to_remove)
+                self._file_handler.remove(entry_to_remove.id)
+
+            return self._repo.update(config_set)
+
+        except EntityNotFoundError:
+            raise ConfigSetNotFoundError(config_set_name)
 
     def all(self) -> list[ConfigSet]:
         """
