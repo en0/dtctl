@@ -1,26 +1,23 @@
-from re import compile as compile_re, search as search_re
-from typing import final
-#from uuid import UUID
+# from uuid import UUID
 from pathlib import Path
+from re import compile as compile_re
+from typing import final
 from uuid import uuid4
+
 from dflib.error import (
     ConfigFileAlreadyExistsError,
+    ConfigFileNameInvalidError,
     ConfigSetNotFoundError,
     DuplicateConfigSetError,
     DuplicateEntityError,
     EntityNotFoundError,
+    FileNotFoundError,
     FileWriteError,
     InvalidConfigSetNameError,
     OperationFailedError,
-    ConfigFileNameInvalidError,
-    FileNotFoundError,
 )
 from dflib.model import ConfigSet, ConfigSetEntry
-from dflib.typing import (
-    IConfigSetFileHandler,
-    IRepository,
-)
-
+from dflib.typing import IConfigSetFileHandler, IRepository
 
 # Allow only a-z, A-Z, 0-9, ., -, and _
 CONFIG_SET_NAME_PATTERN = compile_re(r"^[a-zA-Z0-9._-]+$")
@@ -117,7 +114,12 @@ class ConfigSetService:
             existing_files = {entry.name for entry in config_set.files}
 
             for file_name, file_bytes in files.items():
-                if file_name == "" or file_name == "." or file_name.endswith("\\") or file_name.endswith("/"):
+                if (
+                    file_name == ""
+                    or file_name == "."
+                    or file_name.endswith("\\")
+                    or file_name.endswith("/")
+                ):
                     raise ConfigFileNameInvalidError(file_name)
 
                 elif INVALID_FILENAME_PATTERN.search(file_name):

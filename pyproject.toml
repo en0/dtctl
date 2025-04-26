@@ -9,8 +9,7 @@ requires-python = ">=3.10"
 version = "0.1.0"
 
 dependencies = [
-    "pyioc3==1.6.1",
-    "pytest (>=8.3.5,<9.0.0)"]
+    "pyioc3==1.6.1"]
 
 [project.scripts]
 dfctl = "dfctl.entry:main"
@@ -26,6 +25,7 @@ packages = [
 
 [tool.poetry.group.dev.dependencies]
 click = "<8.0"
+isort = "^6.0"
 black = "^21.0"
 flake8 = "^3.8"
 pytest = "^8.0"
@@ -41,3 +41,11 @@ pythonpath = ["src"]
 reportAny = false
 reportExplicitAny = false
 reportUnknownLambdaType = false
+
+[tool.isort]
+multi_line_output = 3
+line_length = 100
+include_trailing_comma = true
+
+[tool.black]
+line_length = 100

@@ -39,9 +39,7 @@ class FileNotFoundError(FileReadError):
         message (str): A detailed error message describing the issue.
     """
 
-    def __init__(
-        self, file_path: str, message: str = "Unable to write file due to conflict."
-    ):
+    def __init__(self, file_path: str, message: str = "Unable to write file due to conflict."):
         super().__init__(message)
         self.file_path: str = file_path
 
@@ -76,9 +74,7 @@ class FileConflictError(FileWriteError):
         message (str): A detailed error message describing the issue.
     """
 
-    def __init__(
-        self, file_path: str, message: str = "Unable to write file due to conflict."
-    ):
+    def __init__(self, file_path: str, message: str = "Unable to write file due to conflict."):
         super().__init__(message)
         self.file_path: str = file_path
 
@@ -137,9 +133,7 @@ class DuplicateConfigSetError(DFError):
 
     def __init__(self, config_set_name: str):
         self.config_set_name: str = config_set_name
-        super().__init__(
-            f"A configuration set with the name '{config_set_name}' already exists."
-        )
+        super().__init__(f"A configuration set with the name '{config_set_name}' already exists.")
 
 
 class ConfigSetNotFoundError(DFError):
