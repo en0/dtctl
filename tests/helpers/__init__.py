@@ -13,7 +13,6 @@ from .constants import (
     DEFAULT_FILE_IDENTITY,
 )
 
-
 __all__ = [
     "DEFAULT_CONFIG_FILE_BYTES",
     "DEFAULT_CONFIG_FILE_NAME",

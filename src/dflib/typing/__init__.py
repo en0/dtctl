@@ -15,12 +15,12 @@ aligned with specific functionality or storage backends.
 
 from .config_set_file_handler import IConfigSetFileHandler
 from .repository import (
-    FilterPredicate,
     IDENTITY_T,
-    IQueryBuilder,
-    IFilterVisitor,
-    IRepository,
     MODEL_T,
+    FilterPredicate,
+    IFilterVisitor,
+    IQueryBuilder,
+    IRepository,
 )
 
 __all__ = [

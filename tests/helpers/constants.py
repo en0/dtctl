@@ -1,6 +1,6 @@
 """Constants and defautls for unit tests."""
-from uuid import UUID
 
+from uuid import UUID
 
 DEFAULT_CONFIG_FILE_BYTES = b"The quick brown fox jumped over the lazy dog."
 DEFAULT_CONFIG_FILE_NAME = "default_config_file.conf"

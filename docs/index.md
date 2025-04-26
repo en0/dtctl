@@ -17,7 +17,7 @@ might include two files and the i3 configuration set might include one file.
 
 ### Transaction Management Strategy for `ConfigSetService`
 
-1. **Objective**: 
+1. **Objective**:
    - Ensure atomic operations within the `ConfigSetService`, particularly for methods like `add_files`, to maintain consistency and prevent partial updates.
 
 2. **Approach Considered**:

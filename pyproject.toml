@@ -24,7 +24,6 @@ packages = [
     { include = "dflib", from = "src" }]
 
 [tool.poetry.group.dev.dependencies]
-flake8 = "^3.8"
 pytest = "^8.0"
 pytest-watch = "^4.2"
 pre-commit = "^4.2.0"
@@ -47,3 +46,15 @@ include_trailing_comma = true
 
 [tool.black]
 line_length = 100
+
+[tool.flake8]
+# Give just a bit of wiggle room
+max-line-length = 110
+exclude = [
+    "__pycache__",
+    "tests/**"]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+exclude = 'tests/'

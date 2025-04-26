@@ -96,14 +96,16 @@ class ConfigSetService:
 
         Args:
             config_set_name (str): The name of the configuration set to modify.
-            files (dict[str, bytes]): A dictionary where keys are file names and values are file content as bytes.
+            files (dict[str, bytes]): A dictionary where keys are file names and values are file
+                content as bytes.
 
         Returns:
             ConfigSet: The updated configuration set after the files are added.
 
         Raises:
             ConfigSetNotFoundError: Raised if the configuration set does not exist.
-            ConfigFileAlreadyExistsError: Raised if one or more files already exist in the configuration set.
+            ConfigFileAlreadyExistsError: Raised if one or more files already exist in the
+                configuration set.
             OperationFailedError: Raised if the operation to add files fails.
         """
 

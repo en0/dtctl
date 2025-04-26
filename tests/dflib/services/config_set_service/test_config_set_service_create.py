@@ -1,9 +1,8 @@
 import pytest
 
 from dflib.error import DuplicateConfigSetError, InvalidConfigSetNameError
-from dflib.service import ConfigSetService
 from dflib.model import ConfigSet
-
+from dflib.service import ConfigSetService
 from tests.fixtures import *
 from tests.helpers import *
 from tests.mocks import *
@@ -12,8 +11,7 @@ from .fixtures import *
 
 
 def test_can_create_config_set(
-    unit: ConfigSetService,
-    mock_config_set_repo: ConfigSetRepositoryMock
+    unit: ConfigSetService, mock_config_set_repo: ConfigSetRepositoryMock
 ):
     # given
     name = DEFAULT_CONFIG_SET_NAME
@@ -26,8 +24,7 @@ def test_can_create_config_set(
 
 
 def test_cannot_create_duplicate_config_set(
-    unit: ConfigSetService,
-    mock_config_set_repo: ConfigSetRepositoryMock
+    unit: ConfigSetService, mock_config_set_repo: ConfigSetRepositoryMock
 ):
     # given
     name = DEFAULT_CONFIG_SET_NAME
@@ -48,77 +45,93 @@ def test_cannot_create_config_set_with_empty_name(unit: ConfigSetService):
         _ = unit.create(empty_name)
 
 
-@pytest.mark.parametrize("whitespace_name", [
-    "   ",    # Spaces
-    "\t",     # Tab
-    "\n",     # Newline
-    "\r",     # Carriage return
-    "\r\n",   # Carriage return + Newline
-    "\t\n",   # Tab + Newline
-])
-def test_cannot_create_config_set_with_whitespace_name(unit: ConfigSetService, whitespace_name: str):
+@pytest.mark.parametrize(
+    "whitespace_name",
+    [
+        "   ",  # Spaces
+        "\t",  # Tab
+        "\n",  # Newline
+        "\r",  # Carriage return
+        "\r\n",  # Carriage return + Newline
+        "\t\n",  # Tab + Newline
+    ],
+)
+def test_cannot_create_config_set_with_whitespace_name(
+    unit: ConfigSetService, whitespace_name: str
+):
     # when / then
     with pytest.raises(InvalidConfigSetNameError):
         _ = unit.create(whitespace_name)
 
 
-@pytest.mark.parametrize("invalid_name", [
-    "name!",    # Exclamation mark
-    "name@",    # At symbol
-    "name#",    # Hash
-    "name$",    # Dollar sign
-    "name%",    # Percent
-    "name^",    # Caret
-    "name&",    # Ampersand
-    "name*",    # Asterisk
-    "name(",    # Open parenthesis
-    "name)",    # Close parenthesis
-    "name+",    # Plus
-    "name=",    # Equals
-    "name{",    # Open brace
-    "name}",    # Close brace
-    "name[",    # Open bracket
-    "name]",    # Close bracket
-    "name|",    # Pipe
-    "name\\",   # Backslash
-    "name;",    # Semicolon
-    "name'",    # Single quote
-    'name"',    # Double quote
-    "name<",    # Less than
-    "name>",    # Greater than
-    "name,",    # Comma
-    "name?",    # Question mark
-    "name/",    # Forward slash
-])
+@pytest.mark.parametrize(
+    "invalid_name",
+    [
+        "name!",  # Exclamation mark
+        "name@",  # At symbol
+        "name#",  # Hash
+        "name$",  # Dollar sign
+        "name%",  # Percent
+        "name^",  # Caret
+        "name&",  # Ampersand
+        "name*",  # Asterisk
+        "name(",  # Open parenthesis
+        "name)",  # Close parenthesis
+        "name+",  # Plus
+        "name=",  # Equals
+        "name{",  # Open brace
+        "name}",  # Close brace
+        "name[",  # Open bracket
+        "name]",  # Close bracket
+        "name|",  # Pipe
+        "name\\",  # Backslash
+        "name;",  # Semicolon
+        "name'",  # Single quote
+        'name"',  # Double quote
+        "name<",  # Less than
+        "name>",  # Greater than
+        "name,",  # Comma
+        "name?",  # Question mark
+        "name/",  # Forward slash
+    ],
+)
 def test_cannot_create_config_set_with_special_chars(unit: ConfigSetService, invalid_name: str):
     # when / then
     with pytest.raises(InvalidConfigSetNameError):
         _ = unit.create(invalid_name)
 
 
-@pytest.mark.parametrize("non_string_name", [
-    [],              # Empty list
-    {},              # Empty dictionary
-    object(),        # Generic object
-])
-def test_cannot_create_config_set_with_non_stringable_name(unit: ConfigSetService, non_string_name: str):
+@pytest.mark.parametrize(
+    "non_string_name",
+    [
+        [],  # Empty list
+        {},  # Empty dictionary
+        object(),  # Generic object
+    ],
+)
+def test_cannot_create_config_set_with_non_stringable_name(
+    unit: ConfigSetService, non_string_name: str
+):
     # when / then
     with pytest.raises(InvalidConfigSetNameError):
         _ = unit.create(non_string_name)
 
 
-@pytest.mark.parametrize("untrimmed_whitespace", [
-    " name",
-    "\tname",
-    "\rname",
-    "\nname",
-    "name ",
-    "name\t",
-    "name\r",
-    "name\n",
-    " name ",
-    " name\t",
-])
+@pytest.mark.parametrize(
+    "untrimmed_whitespace",
+    [
+        " name",
+        "\tname",
+        "\rname",
+        "\nname",
+        "name ",
+        "name\t",
+        "name\r",
+        "name\n",
+        " name ",
+        " name\t",
+    ],
+)
 def test_can_trim_whitespace_in_config_set_name(
     unit: ConfigSetService,
     mock_config_set_repo: ConfigSetRepositoryMock,

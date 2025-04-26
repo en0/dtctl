@@ -1,7 +1,8 @@
+from typing import override
+from uuid import UUID
+
 from dflib.error import FileConflictError
 from dflib.typing import IConfigSetFileHandler
-from uuid import UUID
-from typing import override
 
 
 class ConfigSetFileHandlerMock(IConfigSetFileHandler):
@@ -25,4 +26,4 @@ class ConfigSetFileHandlerMock(IConfigSetFileHandler):
         del self.storage[ident]
 
     def __init__(self):
-        self.storage: dict[UUID, bytes]  = {}
+        self.storage: dict[UUID, bytes] = {}

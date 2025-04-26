@@ -1,11 +1,10 @@
 import pytest
 
-from dflib.service import ConfigSetService
 from dflib.error import ConfigSetNotFoundError, FileNotFoundError
-
+from dflib.service import ConfigSetService
 from tests.fixtures import *
-from tests.mocks import *
 from tests.helpers import *
+from tests.mocks import *
 
 from .fixtures import *
 
@@ -21,7 +20,7 @@ def test_files_are_removed_from_configuration_set(
 
     files_to_add: dict[str, bytes] = {
         DEFAULT_CONFIG_FILE_NAME: DEFAULT_CONFIG_FILE_BYTES,
-        DEFAULT_CONFIG_FILE_NAME+'2': DEFAULT_CONFIG_FILE_BYTES + b'2',
+        DEFAULT_CONFIG_FILE_NAME + "2": DEFAULT_CONFIG_FILE_BYTES + b"2",
     }
     _ = unit.add_files(config_set_name, files_to_add)
 
@@ -32,7 +31,7 @@ def test_files_are_removed_from_configuration_set(
     config_set = repo.find_by_id(config_set_name)
     print(config_set)
     assert len(config_set.files) == 1
-    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME+'2' for file in config_set.files)
+    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME + "2" for file in config_set.files)
 
 
 def test_remove_nonexistent_file_raises_error(unit: ConfigSetService):
@@ -57,9 +56,7 @@ def test_remove_from_nonexistent_config_set_raises_error(unit: ConfigSetService)
 
 
 def test_remove_files_returns_none(
-    unit: ConfigSetService,
-    repo: ConfigSetRepositoryMock,
-    file_handler: ConfigSetFileHandlerMock
+    unit: ConfigSetService, repo: ConfigSetRepositoryMock, file_handler: ConfigSetFileHandlerMock
 ):
     # given: a configuration set with multiple files
     config_set_name = "test_config_set"
@@ -85,7 +82,7 @@ def test_remove_specified_files_from_config_set(
     _ = unit.create(config_set_name)
     files_to_add: dict[str, bytes] = {
         DEFAULT_CONFIG_FILE_NAME: DEFAULT_CONFIG_FILE_BYTES,
-        DEFAULT_CONFIG_FILE_NAME + '2': DEFAULT_CONFIG_FILE_BYTES + b'2',
+        DEFAULT_CONFIG_FILE_NAME + "2": DEFAULT_CONFIG_FILE_BYTES + b"2",
     }
     _ = unit.add_files(config_set_name, files_to_add)
 
@@ -95,7 +92,7 @@ def test_remove_specified_files_from_config_set(
     # then: Verify that the specified file has been removed
     config_set = repo.find_by_id(config_set_name)
     assert len(config_set.files) == 1
-    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME + '2' for file in config_set.files)
+    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME + "2" for file in config_set.files)
 
 
 def test_remove_multiple_files_successfully(
@@ -108,18 +105,20 @@ def test_remove_multiple_files_successfully(
     _ = unit.create(config_set_name)
     files_to_add: dict[str, bytes] = {
         DEFAULT_CONFIG_FILE_NAME: DEFAULT_CONFIG_FILE_BYTES,
-        DEFAULT_CONFIG_FILE_NAME + '2': DEFAULT_CONFIG_FILE_BYTES + b'2',
-        DEFAULT_CONFIG_FILE_NAME + '3': DEFAULT_CONFIG_FILE_BYTES + b'3',
+        DEFAULT_CONFIG_FILE_NAME + "2": DEFAULT_CONFIG_FILE_BYTES + b"2",
+        DEFAULT_CONFIG_FILE_NAME + "3": DEFAULT_CONFIG_FILE_BYTES + b"3",
     }
     _ = unit.add_files(config_set_name, files_to_add)
 
     # when: Remove multiple files from the configuration set
-    _ = unit.remove_files(config_set_name, [DEFAULT_CONFIG_FILE_NAME, DEFAULT_CONFIG_FILE_NAME + '2'])
+    _ = unit.remove_files(
+        config_set_name, [DEFAULT_CONFIG_FILE_NAME, DEFAULT_CONFIG_FILE_NAME + "2"]
+    )
 
     # then: Verify that the specified files have been removed
     config_set = repo.find_by_id(config_set_name)
     assert len(config_set.files) == 1
-    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME + '3' for file in config_set.files)
+    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME + "3" for file in config_set.files)
 
 
 def test_update_config_set_after_removal(
@@ -132,7 +131,7 @@ def test_update_config_set_after_removal(
     _ = unit.create(config_set_name)
     files_to_add: dict[str, bytes] = {
         DEFAULT_CONFIG_FILE_NAME: DEFAULT_CONFIG_FILE_BYTES,
-        DEFAULT_CONFIG_FILE_NAME + '2': DEFAULT_CONFIG_FILE_BYTES + b'2',
+        DEFAULT_CONFIG_FILE_NAME + "2": DEFAULT_CONFIG_FILE_BYTES + b"2",
     }
     _ = unit.add_files(config_set_name, files_to_add)
 
@@ -142,7 +141,7 @@ def test_update_config_set_after_removal(
     # then: Verify that the configuration set is updated correctly
     config_set = repo.find_by_id(config_set_name)
     assert len(config_set.files) == 1
-    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME + '2' for file in config_set.files)
+    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME + "2" for file in config_set.files)
 
 
 def test_raise_config_set_not_found_error(unit: ConfigSetService):
@@ -187,7 +186,7 @@ def test_remove_files_with_duplicate_names(unit: ConfigSetService, repo: ConfigS
     config_set_name = DEFAULT_CONFIG_SET_NAME
     files_to_add = {
         DEFAULT_CONFIG_FILE_NAME: DEFAULT_CONFIG_FILE_BYTES,
-        DEFAULT_CONFIG_FILE_NAME + '2': DEFAULT_CONFIG_FILE_BYTES + b'2',
+        DEFAULT_CONFIG_FILE_NAME + "2": DEFAULT_CONFIG_FILE_BYTES + b"2",
     }
     _ = unit.create(config_set_name)
     _ = unit.add_files(config_set_name, files_to_add)
@@ -198,7 +197,7 @@ def test_remove_files_with_duplicate_names(unit: ConfigSetService, repo: ConfigS
     # then: ensure duplicates are ignored, but the files are still removed
     config_set = repo.find_by_id(config_set_name)
     assert len(config_set.files) == 1
-    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME + '2' for file in config_set.files)
+    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME + "2" for file in config_set.files)
 
 
 def test_remove_files_case_sensitivity(unit: ConfigSetService, repo: ConfigSetRepositoryMock):
@@ -220,7 +219,7 @@ def test_remove_files_case_sensitivity(unit: ConfigSetService, repo: ConfigSetRe
     assert all(str(file.name) == "File.txt" for file in config_set.files)
 
 
-## TODO: Implement this test when we make a decision on the underlying storage mech.
+# TODO: Implement this test when we make a decision on the underlying storage mech.
 def test_remove_files_partial_success(unit: ConfigSetService):
     # given: a configuration set with some files
     # when: some files are successfully removed and others are not

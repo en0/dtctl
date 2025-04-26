@@ -1,11 +1,8 @@
 import pytest
 
 from dflib.model import ConfigSet
-from dflib.typing import IRepository, IConfigSetFileHandler
-from unittest.mock import MagicMock
-
-
-from tests.mocks import *
+from dflib.typing import IConfigSetFileHandler, IRepository
+from tests.mocks import ConfigSetFileHandlerMock, ConfigSetRepositoryMock
 
 
 @pytest.fixture

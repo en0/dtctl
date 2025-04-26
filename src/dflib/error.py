@@ -1,6 +1,5 @@
 """All exception classes for dflib"""
 
-
 from typing import Any
 
 

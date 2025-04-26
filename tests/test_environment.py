@@ -11,6 +11,7 @@ def test_environment_can_access_dflib():
     print("PYTHONPATH: ", sys.path)
     try:
         import dflib
+
         dflib.__file__
     except ImportError:
         pytest.fail("Unable to import dflib")
@@ -21,6 +22,7 @@ def test_environment_can_access_dflib():
 def test_environment_can_access_dfctl():
     try:
         import dfctl
+
         dfctl.__file__
     except ImportError:
         pytest.fail("Unable to import dfctl")
@@ -31,6 +33,7 @@ def test_environment_can_access_dfctl():
 def test_environment_can_access_fixtures():
     try:
         from tests import fixtures
+
         fixtures.__file__
     except ImportError:
         pytest.fail("Unable to import tests.fixtures")
@@ -41,6 +44,7 @@ def test_environment_can_access_fixtures():
 def test_environment_can_access_helpers():
     try:
         from tests import helpers
+
         helpers.__file__
     except ImportError:
         pytest.fail("Unable to import tests.helpers")

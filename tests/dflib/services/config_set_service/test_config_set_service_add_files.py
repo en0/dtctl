@@ -1,19 +1,24 @@
-import pytest
-
 from pathlib import Path
 from uuid import UUID
-from dflib.service import ConfigSetService
-from dflib.model import ConfigSet, ConfigSetEntry
-from dflib.error import ConfigFileNameInvalidError, ConfigSetNotFoundError, ConfigFileAlreadyExistsError, FileWriteError, OperationFailedError
 
+import pytest
+
+from dflib.error import (
+    ConfigFileAlreadyExistsError,
+    ConfigFileNameInvalidError,
+    ConfigSetNotFoundError,
+    FileWriteError,
+    OperationFailedError,
+)
+from dflib.model import ConfigSet, ConfigSetEntry
+from dflib.service import ConfigSetService
 from tests.fixtures import *
 from tests.helpers import *
 from tests.mocks import *
 
 from .fixtures import *
 
-
-# TODO: TEst Cases to implement
+# TODO: Test Cases to implement
 """
 - **Transaction Consistancy**: Failed operations should not leave partially completed work.
 """
@@ -23,7 +28,7 @@ def test_add_files_success(unit: ConfigSetService, repo: ConfigSetRepositoryMock
     # given
     files = {
         DEFAULT_CONFIG_FILE_NAME: DEFAULT_CONFIG_FILE_BYTES,
-        DEFAULT_CONFIG_FILE_NAME + '2': DEFAULT_CONFIG_FILE_BYTES + b'2',
+        DEFAULT_CONFIG_FILE_NAME + "2": DEFAULT_CONFIG_FILE_BYTES + b"2",
     }
     _ = repo.save(ConfigSet(name=DEFAULT_CONFIG_SET_NAME, files=[]))
 
@@ -62,24 +67,22 @@ def test_add_files_already_exists(
 
 
 def test_writes_file_bytes_correctly(
-    unit: ConfigSetService,
-    repo: ConfigSetRepositoryMock,
-    file_handler: ConfigSetFileHandlerMock
+    unit: ConfigSetService, repo: ConfigSetRepositoryMock, file_handler: ConfigSetFileHandlerMock
 ):
     # given
     _ = repo.save(ConfigSet(name=DEFAULT_CONFIG_SET_NAME, files=[]))
 
     # when
-    config_set = unit.add_files(DEFAULT_CONFIG_SET_NAME, {DEFAULT_CONFIG_FILE_NAME: DEFAULT_CONFIG_FILE_BYTES})
+    config_set = unit.add_files(
+        DEFAULT_CONFIG_SET_NAME, {DEFAULT_CONFIG_FILE_NAME: DEFAULT_CONFIG_FILE_BYTES}
+    )
 
     # then
     assert file_handler.retrieve(config_set.files[0].id) == DEFAULT_CONFIG_FILE_BYTES
 
 
 def test_file_writing_failure(
-    unit: ConfigSetService,
-    repo: ConfigSetRepositoryMock,
-    file_handler: ConfigSetFileHandlerMock
+    unit: ConfigSetService, repo: ConfigSetRepositoryMock, file_handler: ConfigSetFileHandlerMock
 ):
     # given
     _ = repo.save(ConfigSet(name=DEFAULT_CONFIG_SET_NAME, files=[]))
@@ -87,12 +90,17 @@ def test_file_writing_failure(
 
     # Simulate a failure in the file handler's store method
     def failing_store(ident: UUID, data: bytes, overwrite: bool = False) -> None:
-        raise FileWriteError(str(ident), f"Simulated file writing failure: overwrite={overwrite} data={data}")
+        raise FileWriteError(
+            str(ident), f"Simulated file writing failure: overwrite={overwrite} data={data}"
+        )
 
     file_handler.store = failing_store
 
     # when / then
-    with pytest.raises(OperationFailedError, match="The operation 'add_files' failed. Reason: Simulated file writing failure"):
+    with pytest.raises(
+        OperationFailedError,
+        match="The operation 'add_files' failed. Reason: Simulated file writing failure",
+    ):
         _ = unit.add_files(DEFAULT_CONFIG_SET_NAME, files)
 
 
@@ -108,7 +116,9 @@ def test_add_files_empty_file_list(unit: ConfigSetService, repo: ConfigSetReposi
     assert len(updated_config_set.files) == 0
 
 
-def test_correct_file_content(unit: ConfigSetService, repo: ConfigSetRepositoryMock, file_handler: ConfigSetFileHandlerMock):
+def test_correct_file_content(
+    unit: ConfigSetService, repo: ConfigSetRepositoryMock, file_handler: ConfigSetFileHandlerMock
+):
     # given
     files = {DEFAULT_CONFIG_FILE_NAME: DEFAULT_CONFIG_FILE_BYTES}
     _ = repo.save(ConfigSet(name=DEFAULT_CONFIG_SET_NAME, files=[]))
@@ -122,17 +132,25 @@ def test_correct_file_content(unit: ConfigSetService, repo: ConfigSetRepositoryM
         assert stored_bytes == files[str(entry.name)], f"Content mismatch for file {entry.name}"
 
 
-@pytest.mark.parametrize("file_name", [
-    "valid-file.txt",
-    "another_valid_file.doc",
-    "file_with_numbers_123.pdf",
-    "file.name.with.dots.txt",
-    "file-name_with-mixed_chars.txt",
-    "file with spaces.txt",
-    "file/with/full/name.txt",
-    "win\\file\\with\\full\\name.txt",
-])
-def test_valid_file_names(unit: ConfigSetService, repo: ConfigSetRepositoryMock, file_handler: ConfigSetFileHandlerMock, file_name: str):
+@pytest.mark.parametrize(
+    "file_name",
+    [
+        "valid-file.txt",
+        "another_valid_file.doc",
+        "file_with_numbers_123.pdf",
+        "file.name.with.dots.txt",
+        "file-name_with-mixed_chars.txt",
+        "file with spaces.txt",
+        "file/with/full/name.txt",
+        "win\\file\\with\\full\\name.txt",
+    ],
+)
+def test_valid_file_names(
+    unit: ConfigSetService,
+    repo: ConfigSetRepositoryMock,
+    file_handler: ConfigSetFileHandlerMock,
+    file_name: str,
+):
     # given
     files = {file_name: DEFAULT_CONFIG_FILE_BYTES}
     _ = repo.save(ConfigSet(name=DEFAULT_CONFIG_SET_NAME, files=[]))
@@ -146,27 +164,30 @@ def test_valid_file_names(unit: ConfigSetService, repo: ConfigSetRepositoryMock,
     assert stored_bytes == DEFAULT_CONFIG_FILE_BYTES
 
 
-@pytest.mark.parametrize("file_name", [
-    "invalid|file.doc",
-    "invalid:file.doc",
-    "invalid*file.doc",
-    "invalid?file.doc",
-    "invalid<file.doc",
-    "invalid>file.doc",
-    "invalid{file.doc",
-    "invalid}file.doc",
-    "invalid\"file.doc",
-    "invalid!file.doc",
-    "invalid$file.doc",
-    "invalid%file.doc",
-    "|:?<>{}\"!$%",
-    "|invalid.doc",
-    "invalid.doc|",
-    ".",
-    "invalid/",
-    "invalid\\",
-    "",
-])
+@pytest.mark.parametrize(
+    "file_name",
+    [
+        "invalid|file.doc",
+        "invalid:file.doc",
+        "invalid*file.doc",
+        "invalid?file.doc",
+        "invalid<file.doc",
+        "invalid>file.doc",
+        "invalid{file.doc",
+        "invalid}file.doc",
+        'invalid"file.doc',
+        "invalid!file.doc",
+        "invalid$file.doc",
+        "invalid%file.doc",
+        '|:?<>{}"!$%',
+        "|invalid.doc",
+        "invalid.doc|",
+        ".",
+        "invalid/",
+        "invalid\\",
+        "",
+    ],
+)
 def test_invalid_file_names(unit: ConfigSetService, repo: ConfigSetRepositoryMock, file_name: str):
     # given
     files = {file_name: b"Sample content"}
@@ -175,4 +196,3 @@ def test_invalid_file_names(unit: ConfigSetService, repo: ConfigSetRepositoryMoc
     # when / then
     with pytest.raises(ConfigFileNameInvalidError):
         _ = unit.add_files(DEFAULT_CONFIG_SET_NAME, files)
-

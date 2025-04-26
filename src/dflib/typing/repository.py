@@ -1,6 +1,5 @@
-from typing import Generic, TypeVar, Any, Callable
-from abc import abstractmethod, ABC
-
+from abc import ABC, abstractmethod
+from typing import Any, Callable, Generic, TypeVar
 
 MODEL_T = TypeVar("MODEL_T")
 IDENTITY_T = TypeVar("IDENTITY_T")
@@ -93,9 +92,9 @@ class IRepository(Generic[MODEL_T, IDENTITY_T]):
     """
     Generic repository interface for CRUD operations and filtered queries.
 
-    This interface abstracts data access logic, allowing the service layer to work with the repository
-    without being coupled to the underlying storage technology. It provides common operations for
-    saving, updating, deleting, and querying entities.
+    This interface abstracts data access logic, allowing the service layer to work with the
+    repository without being coupled to the underlying storage technology. It provides common
+    operations for saving, updating, deleting, and querying entities.
 
     Responsibilities:
         - Abstract CRUD operations for entities identified by unique keys.
