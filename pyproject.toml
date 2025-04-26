@@ -24,12 +24,10 @@ packages = [
     { include = "dflib", from = "src" }]
 
 [tool.poetry.group.dev.dependencies]
-click = "<8.0"
-isort = "^6.0"
-black = "^21.0"
 flake8 = "^3.8"
 pytest = "^8.0"
 pytest-watch = "^4.2"
+pre-commit = "^4.2.0"
 
 [tool.pytest.ini_options]
 minversion = "6.0"

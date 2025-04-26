@@ -1,7 +1,8 @@
+from typing import override
+
 from dflib.error import DuplicateEntityError, EntityNotFoundError
 from dflib.model import ConfigSet
-from dflib.typing import IRepository, FilterPredicate
-from typing import override
+from dflib.typing import FilterPredicate, IRepository
 
 
 class ConfigSetRepositoryMock(IRepository[ConfigSet, str]):
