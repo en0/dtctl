@@ -1,4 +1,3 @@
-# from uuid import UUID
 from pathlib import Path
 from re import compile as compile_re
 from typing import final
