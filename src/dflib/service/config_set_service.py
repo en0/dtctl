@@ -10,7 +10,7 @@ from dflib.error import (
     DuplicateConfigSetError,
     DuplicateEntityError,
     EntityNotFoundError,
-    FileNotFoundError,
+    FileReadError,
     FileWriteError,
     InvalidConfigSetNameError,
     OperationFailedError,
@@ -80,9 +80,17 @@ class ConfigSetService:
 
         Raises:
             ConfigSetNotFoundError: Raised if the configuration set does not exist.
-            OperationFailedError: Raised if the operation to delete the configuration set fails.
         """
-        raise NotImplementedError()
+        try:
+            config_set = self._repo.find_by_id(config_set_name)
+            for file in config_set.files:
+                try:
+                    self._file_handler.remove(file.id)
+                except FileReadError:
+                    pass
+            self._repo.delete(config_set_name)
+        except EntityNotFoundError:
+            raise ConfigSetNotFoundError(config_set_name)
 
     def add_files(self, config_set_name: str, files: dict[str, bytes]) -> list[str]:
         """
@@ -168,7 +176,7 @@ class ConfigSetService:
             missing_files = file_keys - existing_files
 
             for f in missing_files:
-                raise FileNotFoundError(str(f))
+                raise FileReadError(str(f))
 
             for entry_to_remove in [entry for entry in config_set.files if entry.name in file_keys]:
                 config_set.files.remove(entry_to_remove)
@@ -245,7 +253,7 @@ class ConfigSetService:
             return self._file_handler.retrieve(file.id)
 
         except IndexError:
-            raise FileNotFoundError(file_name)
+            raise FileReadError(file_name)
 
         except EntityNotFoundError:
             raise ConfigSetNotFoundError(config_set_name)

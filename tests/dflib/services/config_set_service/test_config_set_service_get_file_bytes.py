@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 
-from dflib.error import ConfigSetNotFoundError, FileNotFoundError
+from dflib.error import ConfigSetNotFoundError, FileReadError
 from dflib.model import ConfigSetEntry
 from dflib.service import ConfigSetService
 from tests.fixtures import *
@@ -11,11 +11,6 @@ from tests.helpers import *
 from tests.mocks import *
 
 from .fixtures import *
-
-
-@pytest.fixture
-def unit(repo: ConfigSetRepositoryMock, file_handler: ConfigSetFileHandlerMock):
-    return ConfigSetService(repo, file_handler)
 
 
 def test_get_file_bytes(
@@ -54,7 +49,7 @@ def test_file_not_found(
 
     # when: retrieve a file
     # then: ConfigsetNotFound
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(FileReadError):
         result = unit.get_file_bytes(DEFAULT_CONFIG_SET_NAME, DEFAULT_FILE_PATH)
         print(result)
 

@@ -1,6 +1,6 @@
 import pytest
 
-from dflib.error import ConfigSetNotFoundError, FileNotFoundError
+from dflib.error import ConfigSetNotFoundError, FileReadError
 from dflib.service import ConfigSetService
 from tests.fixtures import *
 from tests.helpers import *
@@ -42,7 +42,7 @@ def test_remove_nonexistent_file_raises_error(unit: ConfigSetService):
     _ = unit.add_files(config_set_name, files_to_add)
 
     # when / then: Attempt to remove a nonexistent file and expect a FileNotFoundError
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(FileReadError):
         _ = unit.remove_files(config_set_name, ["nonexistent_file.txt"])
 
 
@@ -160,7 +160,7 @@ def test_raise_file_not_found_error(unit: ConfigSetService):
     _ = unit.add_files(config_set_name, files_to_add)
 
     # when / then: Attempt to remove a nonexistent file and expect a FileNotFoundError
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(FileReadError):
         _ = unit.remove_files(config_set_name, ["nonexistent_file.txt"])
 
 

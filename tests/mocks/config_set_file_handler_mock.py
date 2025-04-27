@@ -1,7 +1,7 @@
 from typing import override
 from uuid import UUID
 
-from dflib.error import FileConflictError
+from dflib.error import FileConflictError, FileReadError
 from dflib.typing import IConfigSetFileHandler
 
 
@@ -16,13 +16,13 @@ class ConfigSetFileHandlerMock(IConfigSetFileHandler):
     @override
     def retrieve(self, ident: UUID) -> bytes:
         if ident not in self.storage:
-            raise FileNotFoundError(f"File with UUID {ident} not found.")
+            raise FileReadError(f"File with UUID {ident} not found.")
         return self.storage[ident]
 
     @override
     def remove(self, ident: UUID) -> None:
         if ident not in self.storage:
-            raise FileNotFoundError(f"File with UUID {ident} not found.")
+            raise FileReadError(f"File with UUID {ident} not found.")
         del self.storage[ident]
 
     def __init__(self):

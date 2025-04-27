@@ -26,22 +26,6 @@ class FileReadError(DFError):
         self.file_path: str = file_path
 
 
-class FileNotFoundError(FileReadError):
-    """
-    Exception raised when a read operation is attempted against a non-existant file path.
-
-    This exception is a specialized form of `FileReadError` and is intended to capture cases where a
-    file read operation fails because the source file does not exist.
-
-    Attributes:
-        file_path (str): The path of the file that caused the conflict.
-        message (str): A detailed error message describing the issue.
-    """
-
-    def __init__(self, file_path: str, message: str = "File not found."):
-        super().__init__(file_path, message)
-
-
 class FileWriteError(DFError):
     """
     Exception raised when there is an issue writing a file.

@@ -68,7 +68,6 @@ class IConfigSetFileHandler(ABC):
 
         Raises:
             FileReadError: Raised if the file to store could not be read for any reason.
-            FileNotFoundError: Raised if the requested file does not exist.
 
         Returns:
             The `bytes` of the configuration file.
@@ -88,6 +87,5 @@ class IConfigSetFileHandler(ABC):
 
         Raises:
             FileReadError: Raised if the file to store could not be read for any reason.
-            FileNotFoundError: Raised if the requested file does not exist.
         """
         raise NotImplementedError()
