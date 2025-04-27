@@ -153,12 +153,15 @@ def test_cannot_create_config_set_with_name_exceeding_max_length(unit: ConfigSet
         _ = unit.create(long_name)
 
 
-def test_can_create_config_set_with_max_length_name(unit: ConfigSetService):
+def test_can_create_config_set_with_max_length_name(
+    unit: ConfigSetService, repo: ConfigSetRepositoryMock
+):
     # given
     max_length_name = "a" * 25  # 25 characters
 
     # when
-    config_set = unit.create(max_length_name)
+    _ = unit.create(max_length_name)
 
     # then
+    config_set = repo.find_by_id(max_length_name)
     assert config_set.name == max_length_name

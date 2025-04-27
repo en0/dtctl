@@ -55,9 +55,7 @@ def test_remove_from_nonexistent_config_set_raises_error(unit: ConfigSetService)
         _ = unit.remove_files(config_set_name, ["file1.txt"])
 
 
-def test_remove_files_returns_none(
-    unit: ConfigSetService, repo: ConfigSetRepositoryMock, file_handler: ConfigSetFileHandlerMock
-):
+def test_remove_files_returns_none(unit: ConfigSetService, repo: ConfigSetRepositoryMock):
     # given: a configuration set with multiple files
     config_set_name = "test_config_set"
     _ = unit.create(config_set_name)
@@ -65,11 +63,11 @@ def test_remove_files_returns_none(
     _ = unit.add_files(config_set_name, files_to_add)
 
     # when: Remove a file from the configuration set
-    updated_config_set = unit.remove_files(config_set_name, ["file1.txt"])
+    updated_files = unit.remove_files(config_set_name, ["file1.txt"])
 
     # then: Verify that the method returns the updated configuration set with the remaining files
-    assert len(updated_config_set.files) == 1
-    assert all(str(file.name) == "file2.txt" for file in updated_config_set.files)
+    assert len(updated_files) == 1
+    assert all(file_name == "file2.txt" for file_name in updated_files)
 
 
 def test_remove_specified_files_from_config_set(
@@ -174,11 +172,12 @@ def test_remove_files_with_empty_list(unit: ConfigSetService, repo: ConfigSetRep
     _ = unit.add_files(config_set_name, files_to_add)
 
     # when: an empty list is passed to remove_files
-    updated_config_set = unit.remove_files(config_set_name, [])
+    _ = unit.remove_files(config_set_name, [])
 
     # then: ensure no operation occurs and the files remain unchanged
-    assert len(updated_config_set.files) == 1
-    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME for file in updated_config_set.files)
+    config_set = repo.find_by_id(DEFAULT_CONFIG_SET_NAME)
+    assert len(config_set.files) == 1
+    assert all(str(file.name) == DEFAULT_CONFIG_FILE_NAME for file in config_set.files)
 
 
 def test_remove_files_with_duplicate_names(unit: ConfigSetService, repo: ConfigSetRepositoryMock):
@@ -220,7 +219,7 @@ def test_remove_files_case_sensitivity(unit: ConfigSetService, repo: ConfigSetRe
 
 
 # TODO: Implement this test when we make a decision on the underlying storage mech.
-def test_remove_files_partial_success(unit: ConfigSetService):
+def test_remove_files_partial_success():
     # given: a configuration set with some files
     # when: some files are successfully removed and others are not
     # then: define behavior for partial success

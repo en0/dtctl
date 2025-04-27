@@ -33,12 +33,11 @@ def test_add_files_success(unit: ConfigSetService, repo: ConfigSetRepositoryMock
     _ = repo.save(ConfigSet(name=DEFAULT_CONFIG_SET_NAME, files=[]))
 
     # when
-    updated_config_set = unit.add_files(DEFAULT_CONFIG_SET_NAME, files)
+    updated_files = unit.add_files(DEFAULT_CONFIG_SET_NAME, files)
 
     # then
-    assert len(updated_config_set.files) == 2
-    print(updated_config_set)
-    assert all(str(file.name) in files for file in updated_config_set.files)
+    assert len(updated_files) == 2
+    assert all(file_name in files for file_name in updated_files)
 
 
 def test_add_files_config_set_not_found(unit: ConfigSetService):
@@ -73,12 +72,14 @@ def test_writes_file_bytes_correctly(
     _ = repo.save(ConfigSet(name=DEFAULT_CONFIG_SET_NAME, files=[]))
 
     # when
-    config_set = unit.add_files(
+    _ = unit.add_files(
         DEFAULT_CONFIG_SET_NAME, {DEFAULT_CONFIG_FILE_NAME: DEFAULT_CONFIG_FILE_BYTES}
     )
 
     # then
-    assert file_handler.retrieve(config_set.files[0].id) == DEFAULT_CONFIG_FILE_BYTES
+    config_set = repo.find_by_id(DEFAULT_CONFIG_SET_NAME)
+    file_id = config_set.files[0].id
+    assert file_handler.retrieve(file_id) == DEFAULT_CONFIG_FILE_BYTES
 
 
 def test_file_writing_failure(
@@ -110,10 +111,11 @@ def test_add_files_empty_file_list(unit: ConfigSetService, repo: ConfigSetReposi
     _ = repo.save(ConfigSet(name=DEFAULT_CONFIG_SET_NAME, files=[]))
 
     # when
-    updated_config_set = unit.add_files(DEFAULT_CONFIG_SET_NAME, empty_files)
+    _ = unit.add_files(DEFAULT_CONFIG_SET_NAME, empty_files)
 
     # then
-    assert len(updated_config_set.files) == 0
+    config_set = repo.find_by_id(DEFAULT_CONFIG_SET_NAME)
+    assert len(config_set.files) == 0
 
 
 def test_correct_file_content(
@@ -124,9 +126,10 @@ def test_correct_file_content(
     _ = repo.save(ConfigSet(name=DEFAULT_CONFIG_SET_NAME, files=[]))
 
     # when
-    config_set = unit.add_files(DEFAULT_CONFIG_SET_NAME, files)
+    _ = unit.add_files(DEFAULT_CONFIG_SET_NAME, files)
 
     # then
+    config_set = repo.find_by_id(DEFAULT_CONFIG_SET_NAME)
     for entry in config_set.files:
         stored_bytes = file_handler.retrieve(entry.id)
         assert stored_bytes == files[str(entry.name)], f"Content mismatch for file {entry.name}"
@@ -156,9 +159,10 @@ def test_valid_file_names(
     _ = repo.save(ConfigSet(name=DEFAULT_CONFIG_SET_NAME, files=[]))
 
     # when
-    config_set = unit.add_files(DEFAULT_CONFIG_SET_NAME, files)
+    _ = unit.add_files(DEFAULT_CONFIG_SET_NAME, files)
 
     # then
+    config_set = repo.find_by_id(DEFAULT_CONFIG_SET_NAME)
     assert len(config_set.files) == 1
     stored_bytes = file_handler.retrieve(config_set.files[0].id)
     assert stored_bytes == DEFAULT_CONFIG_FILE_BYTES

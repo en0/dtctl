@@ -33,7 +33,7 @@ class ConfigSetService:
     and retrieving file contents as bytes. The service handles file metadata and its raw content.
     """
 
-    def create(self, config_set_name: str) -> ConfigSet:
+    def create(self, config_set_name: str) -> None:
         """
         Create a new configuration set.
 
@@ -43,8 +43,7 @@ class ConfigSetService:
         Args:
             config_set_name (str): The name of the new configuration set.
 
-        Returns:
-            ConfigSet: The newly created configuration set.
+
 
         Raises:
             DuplicateConfigSetError: Raised if a configuration set with the same name already exists.
@@ -66,7 +65,7 @@ class ConfigSetService:
         cs = ConfigSet(config_set_name, [])
 
         try:
-            return self._repo.save(cs)
+            _ = self._repo.save(cs)
         except DuplicateEntityError:
             raise DuplicateConfigSetError(config_set_name)
 
@@ -86,7 +85,7 @@ class ConfigSetService:
         """
         raise NotImplementedError()
 
-    def add_files(self, config_set_name: str, files: dict[str, bytes]) -> ConfigSet:
+    def add_files(self, config_set_name: str, files: dict[str, bytes]) -> list[str]:
         """
         Add files to an existing configuration set.
 
@@ -100,7 +99,7 @@ class ConfigSetService:
                 content as bytes.
 
         Returns:
-            ConfigSet: The updated configuration set after the files are added.
+            list[str]: A list of file names that were added to the configuration set.
 
         Raises:
             ConfigSetNotFoundError: Raised if the configuration set does not exist.
@@ -133,7 +132,8 @@ class ConfigSetService:
                 config_set.files.append(entry)
                 self._file_handler.store(entry.id, file_bytes)
 
-            return self._repo.update(config_set)
+            _ = self._repo.update(config_set)
+            return [str(entry.name) for entry in config_set.files]
 
         except EntityNotFoundError:
             raise ConfigSetNotFoundError(config_set_name)
@@ -141,7 +141,7 @@ class ConfigSetService:
         except FileWriteError as e:
             raise OperationFailedError("add_files", str(e))
 
-    def remove_files(self, config_set_name: str, files: list[str]) -> ConfigSet:
+    def remove_files(self, config_set_name: str, files: list[str]) -> list[str]:
         """
         Remove files from an existing configuration set.
 
@@ -153,7 +153,7 @@ class ConfigSetService:
             files (list[str]): A list of file names to remove from the configuration set.
 
         Returns:
-            ConfigSet: The updated configuration set after the files are removed.
+            list[str]: A list of remaining file names in the configuration set after removal.
 
         Raises:
             ConfigSetNotFoundError: Raised if the configuration set does not exist.
@@ -175,26 +175,27 @@ class ConfigSetService:
                 config_set.files.remove(entry_to_remove)
                 self._file_handler.remove(entry_to_remove.id)
 
-            return self._repo.update(config_set)
+            _ = self._repo.update(config_set)
+            return [str(f.name) for f in config_set.files]
 
         except EntityNotFoundError:
             raise ConfigSetNotFoundError(config_set_name)
 
-    def all(self) -> list[ConfigSet]:
+    def list_config_sets(self) -> list[str]:
         """
         List all existing configuration sets.
 
         This method retrieves all configuration sets, including their names and associated files.
 
         Returns:
-            list[ConfigSet]: A list of all configuration sets.
+            list[str]: A list of all configuration set names.
 
         Raises:
             QueryExecutionError: Raised if the operation to retrieve the configuration sets fails.
         """
         raise NotImplementedError()
 
-    def get(self, config_set_name: str) -> ConfigSet:
+    def list_files(self, config_set_name: str) -> list[str]:
         """
         Retrieve a specific configuration set by name.
 
@@ -204,7 +205,7 @@ class ConfigSetService:
             config_set_name (str): The name of the configuration set to retrieve.
 
         Returns:
-            ConfigSet: The configuration set with the specified name.
+            list[str]: A list of file names in the specified configuration set.
 
         Raises:
             ConfigSetNotFoundError: Raised if the configuration set does not exist.
@@ -222,7 +223,7 @@ class ConfigSetService:
             file_name (str): The name of the file to retrieve.
 
         Returns:
-            bytes: The raw bytes of the specified file.
+            bytes: The content of the specified file as bytes.
 
         Raises:
             ConfigSetNotFoundError: Raised if the configuration set does not exist.

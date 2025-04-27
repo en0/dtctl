@@ -32,7 +32,7 @@ pre-commit = "^4.2.0"
 minversion = "6.0"
 addopts = "-x --ff"
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 
 [tool.pyright]
 reportAny = false
