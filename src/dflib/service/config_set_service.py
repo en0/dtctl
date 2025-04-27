@@ -14,6 +14,7 @@ from dflib.error import (
     FileWriteError,
     InvalidConfigSetNameError,
     OperationFailedError,
+    QueryExecutionError,
 )
 from dflib.model import ConfigSet, ConfigSetEntry
 from dflib.typing import IConfigSetFileHandler, IRepository
@@ -42,8 +43,6 @@ class ConfigSetService:
 
         Args:
             config_set_name (str): The name of the new configuration set.
-
-
 
         Raises:
             DuplicateConfigSetError: Raised if a configuration set with the same name already exists.
@@ -191,9 +190,16 @@ class ConfigSetService:
             list[str]: A list of all configuration set names.
 
         Raises:
-            QueryExecutionError: Raised if the operation to retrieve the configuration sets fails.
+            OperationFailedError: Raised if the operation to delete the configuration set fails.
         """
-        raise NotImplementedError()
+        try:
+            # Retrieve all configuration sets from the repository
+            config_sets = self._repo.find_all()
+
+            # Return a list of configuration set names
+            return [config_set.name for config_set in config_sets]
+        except QueryExecutionError as ex:
+            raise OperationFailedError("list_config_sets", str(ex))
 
     def list_files(self, config_set_name: str) -> list[str]:
         """
@@ -210,7 +216,11 @@ class ConfigSetService:
         Raises:
             ConfigSetNotFoundError: Raised if the configuration set does not exist.
         """
-        raise NotImplementedError()
+        try:
+            config_set = self._repo.find_by_id(config_set_name)
+            return [str(entry.name) for entry in config_set.files]
+        except EntityNotFoundError:
+            raise ConfigSetNotFoundError(config_set_name)
 
     def get_file_bytes(self, config_set_name: str, file_name: str) -> bytes:
         """
