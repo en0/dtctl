@@ -38,9 +38,8 @@ class FileNotFoundError(FileReadError):
         message (str): A detailed error message describing the issue.
     """
 
-    def __init__(self, file_path: str, message: str = "Unable to write file due to conflict."):
-        super().__init__(message)
-        self.file_path: str = file_path
+    def __init__(self, file_path: str, message: str = "File not found."):
+        super().__init__(file_path, message)
 
 
 class FileWriteError(DFError):

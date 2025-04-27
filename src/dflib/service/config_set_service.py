@@ -239,7 +239,16 @@ class ConfigSetService:
             ConfigSetNotFoundError: Raised if the configuration set does not exist.
             FileNotFoundError: Raised if the specified file does not exist in the configuration set.
         """
-        raise NotImplementedError()
+        try:
+            config_set = self._repo.find_by_id(config_set_name)
+            file = [f for f in config_set.files if str(f.name) == file_name][0]
+            return self._file_handler.retrieve(file.id)
+
+        except IndexError:
+            raise FileNotFoundError(file_name)
+
+        except EntityNotFoundError:
+            raise ConfigSetNotFoundError(config_set_name)
 
     def __init__(
         self,

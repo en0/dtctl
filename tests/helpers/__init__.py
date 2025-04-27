@@ -11,6 +11,7 @@ from .constants import (
     DEFAULT_CONFIG_FILE_NAME,
     DEFAULT_CONFIG_SET_NAME,
     DEFAULT_FILE_IDENTITY,
+    DEFAULT_FILE_PATH,
 )
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "DEFAULT_CONFIG_FILE_NAME",
     "DEFAULT_CONFIG_SET_NAME",
     "DEFAULT_FILE_IDENTITY",
+    "DEFAULT_FILE_PATH",
 ]
