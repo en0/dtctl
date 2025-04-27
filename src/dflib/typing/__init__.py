@@ -14,6 +14,7 @@ aligned with specific functionality or storage backends.
 """
 
 from .config_set_file_handler import IConfigSetFileHandler
+from .host_configuration import IHostConfiguration
 from .repository import (
     IDENTITY_T,
     MODEL_T,
@@ -27,8 +28,9 @@ __all__ = [
     "FilterPredicate",
     "IConfigSetFileHandler",
     "IDENTITY_T",
-    "IQueryBuilder",
     "IFilterVisitor",
+    "IHostConfiguration",
+    "IQueryBuilder",
     "IRepository",
     "MODEL_T",
 ]

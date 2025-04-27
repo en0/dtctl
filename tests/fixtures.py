@@ -1,8 +1,20 @@
+from typing import Any
+from unittest.mock import MagicMock
+
 import pytest
 
 from dflib.model import ConfigSet
 from dflib.typing import IConfigSetFileHandler, IRepository
-from tests.mocks import ConfigSetFileHandlerMock, ConfigSetRepositoryMock
+from dflib.typing.host_configuration import IHostConfiguration
+from tests.mocks import ConfigSetFileHandlerMock, ConfigSetRepositoryMock, HostConfigMock
+
+
+@pytest.fixture
+def host_config() -> IHostConfiguration:
+    """
+    Mock implementation of IHostConfiguration.
+    """
+    return HostConfigMock()
 
 
 @pytest.fixture
