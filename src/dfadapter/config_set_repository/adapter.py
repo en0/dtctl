@@ -1,8 +1,11 @@
+from configparser import ConfigParser, DuplicateSectionError
 from logging import getLogger
 from pathlib import Path
 from typing import override
+from uuid import UUID
 
-from dflib.model import ConfigSet
+from dflib.error import DuplicateEntityError, EntityNotFoundError
+from dflib.model import ConfigSet, ConfigSetEntry
 from dflib.typing import FilterPredicate, IRepository
 
 from .config import LocalConfigSetRepositoryConfig
@@ -35,27 +38,60 @@ class LocalConfigSetRepository(IRepository[ConfigSet, str]):
 
     @override
     def save(self, entity: ConfigSet) -> ConfigSet:
-        raise NotImplementedError()
+        try:
+            self._catalog.add_section(entity.name)
+            for file in entity.files:
+                self._catalog[entity.name][str(file.name)] = str(file.id)
+            self._write_catalog()
+
+        except DuplicateSectionError:
+            raise DuplicateEntityError(entity.name)
+
+        return entity
 
     @override
     def update(self, entity: ConfigSet) -> ConfigSet:
-        raise NotImplementedError()
+        try:
+            del self._catalog[entity.name]
+            return self.save(entity)
+        except KeyError:
+            raise EntityNotFoundError(entity.name)
 
     @override
     def delete(self, ident: str) -> None:
-        raise NotImplementedError()
+        try:
+            del self._catalog[ident]
+            self._write_catalog()
+        except KeyError:
+            raise EntityNotFoundError(ident)
 
     @override
     def find_by_id(self, ident: str) -> ConfigSet:
-        raise NotImplementedError()
+        try:
+            cs = ConfigSet(ident, [])
+            for name, uid in self._catalog[ident].items():
+                entry = ConfigSetEntry(UUID(uid), Path(name))
+                cs.files.append(entry)
+            return cs
+        except KeyError:
+            raise EntityNotFoundError(ident)
 
     @override
     def find_all(self) -> list[ConfigSet]:
-        raise NotImplementedError()
+        return [self.find_by_id(n) for n in self._catalog.sections()]
 
     @override
     def find(self, filter: FilterPredicate) -> list[ConfigSet]:
         raise NotImplementedError()
 
+    def _write_catalog(self) -> None:
+        self._catalog_path.parent.mkdir(parents=True, exist_ok=True)
+        with self._catalog_path.open("w") as fp:
+            self._catalog.write(fp)
+
     def __init__(self, config: LocalConfigSetRepositoryConfig):
-        self.file_store_dir: Path = config.catalog_path
+        self._catalog_path: Path = config.catalog_path
+        self._catalog: ConfigParser = ConfigParser()
+        if self._catalog_path.exists():
+            with self._catalog_path.open("r") as fp:
+                self._catalog.read_file(fp)
