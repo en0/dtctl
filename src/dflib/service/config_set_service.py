@@ -179,7 +179,7 @@ class ConfigSetService:
             missing_files = file_keys - existing_files
 
             for f in missing_files:
-                raise FileReadError(str(f))
+                raise FileReadError(str(f), f"The file '{f}' does not exist in the config set.")
 
             for entry_to_remove in [entry for entry in config_set.files if entry.name in file_keys]:
                 config_set.files.remove(entry_to_remove)
