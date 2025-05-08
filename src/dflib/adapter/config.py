@@ -29,8 +29,8 @@ class AdapterConfigABC:
           Read an integer from the configuration.
 
     Exception Handling:
-        - Implementations should handle exceptions related to missing
-          configuration keys and provide meaningful defaults.
+        - Implementations should allow ConfigurationValueError to bubble up to the
+          UI so it can provide feedback to the users.
 
     Example:
         class MyAdapterConfig(AdapterConfigABC):
@@ -65,6 +65,10 @@ class AdapterConfigABC:
             key (str): The configuration key to read.
             default (list[str]): The default value to return if the key is not found.
 
+        Raises:
+            ConfigurationValueError: When the configuration data cannot be converted to a list of
+            strings.
+
         Returns:
             list[str]: The list of strings from the configuration, or the default value.
         """
@@ -77,6 +81,10 @@ class AdapterConfigABC:
         Args:
             key (str): The configuration key to read.
             default (list[int]): The default value to return if the key is not found.
+
+        Raises:
+            ConfigurationValueError: When the configuration data cannot be converted to a list of
+            integers.
 
         Returns:
             list[int]: The list of integers from the configuration, or the default value.
@@ -91,6 +99,9 @@ class AdapterConfigABC:
             key (str): The configuration key to read.
             default (str): The default value to return if the key is not found.
 
+        Raises:
+            ConfigurationValueError: When the configuration data cannot be converted to an str.
+
         Returns:
             str: The string from the configuration, or the default value.
         """
@@ -103,6 +114,9 @@ class AdapterConfigABC:
         Args:
             key (str): The configuration key to read.
             default (int): The default value to return if the key is not found.
+
+        Raises:
+            ConfigurationValueError: When the configuration data cannot be converted to an int.
 
         Returns:
             int: The integer from the configuration, or the default value.

@@ -42,6 +42,10 @@ class IHostConfiguration(ABC):
             key (str): The configuration key to read.
             default (list[str]): The default value to return if the key is not found.
 
+        Raises:
+            ConfigurationValueError: When the configuration data cannot be converted to a list of
+            strings.
+
         Returns:
             list[str]: The list of strings from the configuration, or the default value.
         """
@@ -56,6 +60,10 @@ class IHostConfiguration(ABC):
             section (str): The configuration section to read from.
             key (str): The configuration key to read.
             default (list[int]): The default value to return if the key is not found.
+
+        Raises:
+            ConfigurationValueError: When the configuration data cannot be converted to a list of
+            integers.
 
         Returns:
             list[int]: The list of integers from the configuration, or the default value.
@@ -72,6 +80,9 @@ class IHostConfiguration(ABC):
             key (str): The configuration key to read.
             default (str): The default value to return if the key is not found.
 
+        Raises:
+            ConfigurationValueError: When the configuration data cannot be converted to an str.
+
         Returns:
             str: The string from the configuration, or the default value.
         """
@@ -87,7 +98,32 @@ class IHostConfiguration(ABC):
             key (str): The configuration key to read.
             default (int): The default value to return if the key is not found.
 
+        Raises:
+            ConfigurationValueError: When the configuration data cannot be converted to an int.
+
         Returns:
             int: The integer from the configuration, or the default value.
+        """
+        raise NotImplementedError()
+
+    def set_override(self, section: str, key: str, value: str) -> None:
+        """
+        Override a configuration value.
+
+        Note that all configuration overrides are passed in as strings and will be decoded to the
+        requested type. If the given data cannot be converted to the requested type, a ValueError
+        will be raised when the value is requested.
+
+        Example overrides:
+
+            conf.set_override('some-str', 'Hello')
+            conf.set_override('some-slist', ["Hello"])
+            conf.set_override('some-int', '42')
+            conf.set_override('some-ilist', '[42]')
+
+        Args:
+            section (str): The section containing the key to override.
+            key (str): The configuration key to override.
+            value (str): The new value for the configuration key.
         """
         raise NotImplementedError()

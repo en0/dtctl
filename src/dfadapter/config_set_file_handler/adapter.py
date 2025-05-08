@@ -3,6 +3,8 @@ from pathlib import Path
 from typing import override
 from uuid import UUID
 
+from pyioc3.autowire import bind
+
 from dflib.error import FileConflictError, FileReadError, FileWriteError
 from dflib.typing import IConfigSetFileHandler
 
@@ -11,6 +13,7 @@ from .config import LocalConfigSetFileHandlerConfig
 logger = getLogger(__name__)
 
 
+@bind(IConfigSetFileHandler, scope="SINGLETON")
 class LocalConfigSetFileHandler(IConfigSetFileHandler):
     """A local filesystem implementation of the IConfigSetFileHandler interface.
 

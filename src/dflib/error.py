@@ -70,8 +70,8 @@ class EntityNotFoundError(DFError):
     """
 
     def __init__(self, identifier: Any):
-        self.identifier: Any = identifier
         super().__init__(f"No entity with identifier '{identifier}' was not found.")
+        self.identifier: Any = identifier
 
 
 class DuplicateEntityError(DFError):
@@ -83,8 +83,8 @@ class DuplicateEntityError(DFError):
     """
 
     def __init__(self, identifier: Any):
-        self.identifier: Any = identifier
         super().__init__(f"Duplicate entity with identifier '{identifier}'.")
+        self.identifier: Any = identifier
 
 
 class QueryExecutionError(DFError):
@@ -97,9 +97,9 @@ class QueryExecutionError(DFError):
     """
 
     def __init__(self, query: str, reason: str):
+        super().__init__(f"Query failed: {reason}. Query: {query}")
         self.query: str = query
         self.reason: str = reason
-        super().__init__(f"Query failed: {reason}. Query: {query}")
 
 
 class DuplicateConfigSetError(DFError):
@@ -114,8 +114,8 @@ class DuplicateConfigSetError(DFError):
     """
 
     def __init__(self, config_set_name: str):
-        self.config_set_name: str = config_set_name
         super().__init__(f"A configuration set with the name '{config_set_name}' already exists.")
+        self.config_set_name: str = config_set_name
 
 
 class ConfigSetNotFoundError(DFError):
@@ -130,8 +130,8 @@ class ConfigSetNotFoundError(DFError):
     """
 
     def __init__(self, config_set_name: str):
-        self.config_set_name: str = config_set_name
         super().__init__(f"The configuration set '{config_set_name}' was not found.")
+        self.config_set_name: str = config_set_name
 
 
 class ConfigFileAlreadyExistsError(DFError):
@@ -148,11 +148,11 @@ class ConfigFileAlreadyExistsError(DFError):
     """
 
     def __init__(self, config_set_name: str, file_name: str):
-        self.config_set_name: str = config_set_name
-        self.file_name: str = file_name
         super().__init__(
             f"The file '{file_name}' already exists in the configuration set '{config_set_name}'."
         )
+        self.config_set_name: str = config_set_name
+        self.file_name: str = file_name
 
 
 class ConfigFileNotFoundError(DFError):
@@ -169,11 +169,11 @@ class ConfigFileNotFoundError(DFError):
     """
 
     def __init__(self, config_set_name: str, file_name: str):
-        self.config_set_name: str = config_set_name
-        self.file_name: str = file_name
         super().__init__(
             f"The file '{file_name}' was not found in the configuration set '{config_set_name}'."
         )
+        self.config_set_name: str = config_set_name
+        self.file_name: str = file_name
 
 
 class ConfigFileNameInvalidError(DFError):
@@ -188,8 +188,8 @@ class ConfigFileNameInvalidError(DFError):
     """
 
     def __init__(self, file_name: str):
-        self.file_name: str = file_name
         super().__init__(f"The file name '{file_name}' is invalid.")
+        self.file_name: str = file_name
 
 
 class InvalidConfigSetNameError(DFError):
@@ -204,8 +204,8 @@ class InvalidConfigSetNameError(DFError):
     """
 
     def __init__(self, config_set_name: str):
-        self.config_set_name: str = config_set_name
         super().__init__(f"The configuration set name '{config_set_name}' is invalid.")
+        self.config_set_name: str = config_set_name
 
 
 class OperationFailedError(DFError):
@@ -221,8 +221,32 @@ class OperationFailedError(DFError):
     """
 
     def __init__(self, operation: str, reason: str | None = None):
-        self.operation: str = operation
         message = f"The operation '{operation}' failed."
         if reason:
             message += f" Reason: {reason}"
         super().__init__(message)
+        self.operation: str = operation
+
+
+class ConfigurationValueError(DFError):
+    """
+    Exception raised when a configuration value is not the correct type.
+
+    Args:
+        key (str): The configuration key that was requested.
+        value (str): The configuration value.
+        expected_type (str): The expected type of the configuration value.
+
+    Attributes:
+        key (str): The configuration key that was requested.
+        value (str): The configuration value.
+        expected_type (str):
+    """
+
+    def __init__(self, key: str, value: str, expected_type: str):
+        self.key: str = key
+        self.value: str = value
+        self.expected_type: str = expected_type
+        super().__init__(
+            f"Cannot convert '{value}' to {expected_type} for configuration key '{key}'"
+        )

@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import override
 from uuid import UUID
 
+from pyioc3.autowire import bind
+
 from dflib.error import DuplicateEntityError, EntityNotFoundError
 from dflib.model import ConfigSet, ConfigSetEntry
 from dflib.typing import FilterPredicate, IRepository
@@ -13,6 +15,7 @@ from .config import LocalConfigSetRepositoryConfig
 logger = getLogger(__name__)
 
 
+@bind(IRepository[ConfigSet, str], scope="SINGLETON")
 class LocalConfigSetRepository(IRepository[ConfigSet, str]):
     """A local filesystem implementation of the IRepository interface for managing ConfigSets.
 

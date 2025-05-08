@@ -1,9 +1,12 @@
 from pathlib import Path
 from typing import override
 
+from pyioc3.autowire import bind
+
 from dflib.adapter.config import AdapterConfigABC
 
 
+@bind(scope="SINGLETON")
 class LocalConfigSetFileHandlerConfig(AdapterConfigABC):
 
     @property
@@ -14,4 +17,4 @@ class LocalConfigSetFileHandlerConfig(AdapterConfigABC):
     @property
     def file_store_dir(self) -> Path:
         path = self.read_str("fileStoreDirectory", "~/.config/dflib/files")
-        return Path(path)
+        return Path.expanduser(Path(path))

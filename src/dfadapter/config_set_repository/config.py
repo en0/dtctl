@@ -1,9 +1,12 @@
 from pathlib import Path
 from typing import override
 
+from pyioc3.autowire import bind
+
 from dflib.adapter.config import AdapterConfigABC
 
 
+@bind(scope="SINGLETON")
 class LocalConfigSetRepositoryConfig(AdapterConfigABC):
 
     @property
@@ -14,4 +17,4 @@ class LocalConfigSetRepositoryConfig(AdapterConfigABC):
     @property
     def catalog_path(self) -> Path:
         path = self.read_str("catalogPath", "~/.config/dflib/catalog")
-        return Path(path)
+        return Path.expanduser(Path(path))

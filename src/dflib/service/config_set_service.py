@@ -3,6 +3,8 @@ from re import compile as compile_re
 from typing import final
 from uuid import uuid4
 
+from pyioc3.autowire import bind
+
 from dflib.error import (
     ConfigFileAlreadyExistsError,
     ConfigFileNameInvalidError,
@@ -25,6 +27,7 @@ INVALID_FILENAME_PATTERN = compile_re(r'[<>:"|?*{}!$%]')
 
 
 @final
+@bind()
 class ConfigSetService:
     """
     Service for managing configuration sets.
